@@ -58,9 +58,13 @@
                     <i class="fas fa-user-clock"></i>
                     <span>Doctor Schedule</span></a>
             </li>
-            
             <li class="nav-item">
-                <a class="nav-link" href="appointment.php">
+                <a class="nav-link" href="apfee.php">
+                <i class="nav-icon fas fa-rupee-sign"></i>
+                    <span>Appointment Fee</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="viewdrbookings.php">
                     <i class="fas fa-notes-medical"></i>
                     <span>Appointment</span></a>
             </li>
@@ -69,6 +73,11 @@
                 <a class="nav-link" href="profile.php">
                     <i class="far fa-id-card"></i>
                     <span>Profile</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="logout.php">
+                    <i class="far fa-id-card"></i>
+                    <span>Logout</span></a>
             </li>
             
             <!-- Sidebar Toggler (Sidebar) -->
@@ -106,19 +115,19 @@
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="user_profile_name"></span>
                                 <img class="img-profile rounded-circle"
-                                    src="<?php echo $user_profile_image; ?>" id="user_profile_image">
+                                <i class="zmdi zmdi-hc-lg zmdi-settings"></i>>
                             </a>
                             <!-- Dropdown - User Information -->
                             
                             
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="doctor_profile.php">
+                                <a class="dropdown-item" href="profile.php">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="logout.php" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>

@@ -12,7 +12,7 @@ include('includes/dbconnection.php');
     
         // TODO: Validate and sanitize user inputs here
 
-        $sql = "Insert Into tblstaff(FullName,Email,MobileNo,Address,Password)Values(:fname,:email,:mobile,:address,:password)";
+        $sql = "Insert Into tblstaff(FullName,Email,MobileNo,Address,Password,,Status,Approval_status)Values(:fname,:email,:mobile,:address,:password,'Active','Pending')";
         $query = $dbh->prepare($sql);
         $query->bindParam(':fname',$fname,PDO::PARAM_STR);
         $query->bindParam(':email',$email,PDO::PARAM_STR);
@@ -20,7 +20,7 @@ include('includes/dbconnection.php');
         $query->bindParam(':address',$address,PDO::PARAM_STR);
         $query->bindParam(':password',$password,PDO::PARAM_STR);
         if ($query->execute()) {
-            echo '<script>alert("Staff has been added successfully")</script>';
+            echo '<script>alert("Staff has been added successfully.Pending for approval.")</script>';
         } else {
             // Handle the case where the query fails
             echo '<script>alert("Error adding staff. Please try again later.")</script>';
@@ -72,7 +72,7 @@ include('includes/dbconnection.php');
             
             <form class="form-horizontal" method="post"onsubmit="return validateForm()">
               <div class="form-group">
-                <label for="exampleTextInput1" class="col-sm-3 control-label">Staff ID:</label>
+                <label for="exampleTextInput1" class="col-sm-3 control-label">Staff Name:</label>
                 <div class="col-sm-9">
                   <input id="fname" type="text" class="form-control" placeholder="Full Name" name="fname" required="true" onkeyup="validateName()">
                   <div id="nameError" class="error"></div>

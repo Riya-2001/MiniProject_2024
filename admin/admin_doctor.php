@@ -138,7 +138,7 @@ include('includes/dbconnection.php');
         <div class="col-md-4 col-xl-3">
             <div class="card bg-c-pink order-card">
                 <div class="card-block">
-                    <a href="del_staff.php"> 
+                    <a href="approve_reject_doctor.php"> 
                         <h6 class="m-b-20">Approve/Reject Doctor</h6>
                     </a>
                     <br>

@@ -41,21 +41,23 @@ $fname=$row->FullName;
           </a>
        
         </li>
-
-       <li class="has-submenu">
-          <a href="javascript:void(0)" class="submenu-toggle">
-            <i class="menu-icon zmdi zmdi-pages zmdi-hc-lg"></i>
-            <span class="menu-text">Appointment</span>
-            <i class="menu-caret zmdi zmdi-hc-sm zmdi-chevron-right"></i>
+        <li class="has-submenu">
+          <a href="viewdrs.php">
+            <i class="menu-icon zmdi zmdi-view-dashboard zmdi-hc-lg"></i>
+            <span class="menu-text">View Doctors</span>
+            
           </a>
-          <ul class="submenu">
-            <li><a href="new-appointment.php"><span class="menu-text">New Appointment</span></a></li>
-            <li><a href="approved-appointment.php"><span class="menu-text">Approved Appointment</span></a></li>
-            <li><a href="cancelled-appointment.php"><span class="menu-text">Cancelled Appointment</span></a></li>
-            <li><a href="all-appointment.php"><span class="menu-text">All Appointment</span></a></li>
-           
-          </ul>
+       
         </li>
+        <li class="has-submenu">
+          <a href="viewpts.php">
+            <i class="menu-icon zmdi zmdi-view-dashboard zmdi-hc-lg"></i>
+            <span class="menu-text">View Patients</span>
+            
+          </a>
+       
+        </li>
+
         <li class="has-submenu">
           <a href="profile.php">
             <i class="menu-icon zmdi zmdi-view-dashboard zmdi-hc-lg"></i>

@@ -11,7 +11,7 @@ if(isset($_POST['submit']))
 $eid=$_SESSION['damsid'];
 $cpassword=md5($_POST['currentpassword']);
 $newpassword=md5($_POST['newpassword']);
-$sql ="SELECT ID FROM tbladmin WHERE ID=:eid and Password=:cpassword";
+$sql ="SELECT ID FROM tblpatient WHERE ID=:eid and Password=:cpassword";
 $query= $dbh -> prepare($sql);
 $query-> bindParam(':eid', $eid, PDO::PARAM_STR);
 $query-> bindParam(':cpassword', $cpassword, PDO::PARAM_STR);
@@ -20,7 +20,7 @@ $results = $query -> fetchAll(PDO::FETCH_OBJ);
 
 if($query -> rowCount() > 0)
 {
-$con="update tbladmin set Password=:newpassword where ID=:eid";
+$con="update tblpatient set Password=:newpassword where ID=:eid";
 $chngpwd1 = $dbh->prepare($con);
 $chngpwd1-> bindParam(':eid', $eid, PDO::PARAM_STR);
 $chngpwd1-> bindParam(':newpassword', $newpassword, PDO::PARAM_STR);

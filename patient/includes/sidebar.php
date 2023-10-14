@@ -34,18 +34,24 @@ $fname=$row->FullName;
 
 
         <li class="has-submenu">
-          <a href="new-appointment.php">
+          <a href="drbooking.php">
             <i class="menu-icon zmdi zmdi-view-dashboard zmdi-hc-lg"></i>
             <span class="menu-text">New Appointment</span>
           </a>
         </li>
+        
         <li class="has-submenu">
-          <a href="view-appointment.php">
+            <a  href="viewdrbookings.php">
             <i class="menu-icon zmdi zmdi-view-dashboard zmdi-hc-lg"></i>
-            <span class="menu-text">View Bookings</span>
-          </a>
-        </li>
-
+              <span class="menu-text">View Bookings</span>
+            </a>
+          </li>
+          <li class="has-submenu">
+            <a  href="viewreports.php" class="nav-link ">
+            <i class="menu-icon zmdi zmdi-view-dashboard zmdi-hc-lg"></i>
+              <span class="menu-text">View Report</span>
+            </a>
+          </li>
         <li class="has-submenu">
           <a href="profile.php">
             <i class="menu-icon zmdi zmdi-view-dashboard zmdi-hc-lg"></i>

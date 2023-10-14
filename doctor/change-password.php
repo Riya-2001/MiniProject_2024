@@ -2,7 +2,6 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-error_reporting(0);
 if (strlen($_SESSION['damsid']==0)) {
   header('location:logout.php');
   } else{
@@ -31,8 +30,6 @@ echo '<script>alert("Your password successully changed")</script>';
 echo '<script>alert("Your current password is wrong")</script>';
 
 }
-
-
 
 }
 

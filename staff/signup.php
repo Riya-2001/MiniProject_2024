@@ -15,7 +15,7 @@ if(isset($_POST['submit']))
     $query-> execute();
     if ($query->rowCount() == 0) {
        
-$sql_staff="Insert Into tblstaff(FullName,Email,MobileNo,Address,Password,Status)Values(:fname,:email,:mobile,:address,:password,'Active')";
+$sql_staff="Insert Into tblstaff(FullName,Email,MobileNo,Address,Password,Status,Approval_status)Values(:fname,:email,:mobile,:address,:password,'Active','Pending')";
 $query_staff = $dbh->prepare($sql_staff);
         $query_staff->bindParam(':fname', $fname, PDO::PARAM_STR);
         $query_staff->bindParam(':mobile', $mobile, PDO::PARAM_STR);
@@ -25,23 +25,22 @@ $query_staff = $dbh->prepare($sql_staff);
 
         if ($query_staff->execute()) {
             // Insert into tblrole
-            $sql_role = "INSERT INTO tblrole(Email, Password, Role) VALUES(:email, :password, 3)";
+            $sql_role = "INSERT INTO tblrole(Email, Password, Role, Status) VALUES(:email, :password, 3, 1)";
             $query_role = $dbh->prepare($sql_role);
             $query_role->bindParam(':email', $email, PDO::PARAM_STR);
             $query_role->bindParam(':password', $password, PDO::PARAM_STR);
 
             if ($query_role->execute()) {
-                echo "<script>alert('You have signed up successfully');</script>";
+                echo "<script>alert('Registration successful. Pending for approval.');</script>";
             } else {
                 echo "<script>alert('Something went wrong. Please try again');</script>";
             }
-        } else {
-            echo "<script>alert('Something went wrong with tblstaff insert');</script>";
-        }
+        
     } else {
         echo "<script>alert('Email already exists');</script>";
     }
 }
+  }
 ?>
 
 <!doctype html>
@@ -73,7 +72,7 @@ $query_staff = $dbh->prepare($sql_staff);
 		</div><!-- logo -->
 		<div class="simple-page-form animated flipInY" id="login-form">
 	<h4 class="form-title m-b-xl text-center">Sign Up With Your DentCare Account</h4>
-	<form action="" method="post" onsubmit="return validateForm()">
+	<form action="" method="post">
 	<div class="row">
             <div class="col-md-6">
 				<div class="form-group">
@@ -104,7 +103,7 @@ $query_staff = $dbh->prepare($sql_staff);
 			<div id="cpasswordError" class="error"></div>
 		</div>
 </div>
-		<input type="submit" class="btn btn-primary" value="Register" name="submit">
+		<input type="submit" class="btn btn-primary" value="Register" name="submit"onclick="return validateForm()">
 	</form>
 </div>
 </div><!-- #login-form -->
@@ -112,22 +111,19 @@ $query_staff = $dbh->prepare($sql_staff);
 <div class="simple-page-footer">
 	<p>
 		<small>Do you have an account ?</small>
-		<a href="login.php">SIGN IN</a>
+		<a href="../login.php">SIGN IN</a>
 	</p>
 </div>
 	</div><!-- .simple-page-wrap -->
 	<script>
 	function validateForm() {
-            const isNameValid = validateName();
-            const isEmailValid = validateEmail();
-            const isMobileValid = validateMobile();
-          const isAddressValid = validateAddress();
-            const isPasswordValid = validatePassword();
-
-            if (isNameValid && isEmailValid && isMobileValid && isAddressValid && isPasswordValid) {
-                return true;
-            
+            if(validateName() && validateEmail() && validateMobile() && validateAddress() &&   validatePassword() &&  validateCPassword()){
+     return true;
 			}
+            else
+   {
+    return false;
+   }
         }
   function validateName() {
             const nameInput = document.getElementById("fname");
@@ -144,10 +140,13 @@ $query_staff = $dbh->prepare($sql_staff);
             }
             if (!nameRegex.test(name)) {
                 nameError.textContent = "Name should only contain letters";
+                return false;
             } else if (hasConsecutiveSameChars) {
                 nameError.textContent = "Name should not have consecutive same characters";
+                return false;
             } else {
                 nameError.textContent = "";
+                return true;
             }
         }
 
@@ -169,7 +168,7 @@ $query_staff = $dbh->prepare($sql_staff);
         function validateMobile() {
             const mobile = document.getElementById("mobile").value.trim();
             const mobileError = document.getElementById("mobileError");
-            const mobileRegex = /^[789]\d{9}$/;
+            const mobileRegex = /^[6789]\d{9}$/;
             const sameDigitRegex = /^(\d)\1+$/;
 
             if (!mobileRegex.test(mobile) || sameDigitRegex.test(mobile)) {
@@ -185,13 +184,17 @@ $query_staff = $dbh->prepare($sql_staff);
         function validateAddress() {
             const address = document.getElementById("address").value.trim();
             const addressError = document.getElementById("addressError");
-
+            const nameRegex = /^[A-Za-z]+$/;
             if (address.length < 5) {
                 addressError.textContent = "Invalid address";
                 addressError.style.color = "red";
                 return false;
             }
-
+            else if (!nameRegex.test(address)) {
+                addressError.textContent = "Address should only contain letters";
+                addressError.style.color = "red";
+                return false;
+            }   
             addressError.textContent = "";
             return true;
         }
@@ -203,12 +206,16 @@ $query_staff = $dbh->prepare($sql_staff);
             const specialCharRegex = /[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]/;
             if (password.length > 10) {
                 passwordError.textContent = "Password length cannot exceed 10 characters";
+                return false;
             } else if (!upperCaseRegex.test(password)) {
                 passwordError.textContent = "Password must contain at least one uppercase letter";
+                return false;
             } else if (!specialCharRegex.test(password)) {
                 passwordError.textContent = "Password must contain at least one special character";
+                return false;
             } else {
                 passwordError.textContent = "";
+                return true;
             }
         }
 	function validateCPassword(){
@@ -221,8 +228,10 @@ $query_staff = $dbh->prepare($sql_staff);
     if (password !== confirmPassword) {
         passwordError.textContent = "Passwords do not match";
         passwordError.style.color = "red";
+        return false;
     } else {
         passwordError.textContent = "";
+        return true;
     }
 }
 

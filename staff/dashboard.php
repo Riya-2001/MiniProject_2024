@@ -2,9 +2,11 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
+include_once('includes/header.php');
+ include_once('includes/sidebar.php');
 if (strlen($_SESSION['damsid']==0)) {
   header('location:logout.php');
-  } else{
+  } 
 
 
 
@@ -54,7 +56,7 @@ if (strlen($_SESSION['damsid']==0)) {
 					<div class="widget-body clearfix">
 						<?php 
 						 $docid=$_SESSION['damsid'];;
-$sql ="SELECT * from  tblappointment where Status is null && Doctor=:docid ";
+$sql ="SELECT * from  tblbooking where status is null && Doctor=:docid ";
 $query = $dbh -> prepare($sql);
 $query-> bindParam(':docid', $docid, PDO::PARAM_STR);
 $query->execute();
@@ -79,7 +81,7 @@ $totnewapt=$query->rowCount();
 					<div class="widget-body clearfix">
 						<?php 
 						 $docid=$_SESSION['damsid'];;
-$sql ="SELECT * from  tblappointment where Status='Approved' && Doctor=:docid ";
+$sql ="SELECT * from  tblbooking where status=1 && Doctor=:docid ";
 $query = $dbh -> prepare($sql);
 $query-> bindParam(':docid', $docid, PDO::PARAM_STR);
 $query->execute();
@@ -105,7 +107,7 @@ $totappapt=$query->rowCount();
 						<div class="pull-left">
 							<?php 
 						 $docid=$_SESSION['damsid'];;
-$sql ="SELECT * from  tblappointment where Status='Cancelled' && Doctor=:docid ";
+$sql ="SELECT * from  tblbooking where status=0 && Doctor=:docid ";
 $query = $dbh -> prepare($sql);
 $query-> bindParam(':docid', $docid, PDO::PARAM_STR);
 $query->execute();
@@ -131,7 +133,7 @@ $totncanapt=$query->rowCount();
 						<div class="pull-left">
 							<?php 
 						 $docid=$_SESSION['damsid'];;
-$sql ="SELECT * from  tblappointment where Doctor=:docid ";
+$sql ="SELECT * from  tblbooking where Doctor=:docid ";
 $query = $dbh -> prepare($sql);
 $query-> bindParam(':docid', $docid, PDO::PARAM_STR);
 $query->execute();
@@ -187,4 +189,3 @@ $totapt=$query->rowCount();
 	<script src="assets/js/fullcalendar.js"></script>
 </body>
 </html>
-<?php }  ?>

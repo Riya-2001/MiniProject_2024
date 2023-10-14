@@ -11,15 +11,15 @@ include('includes/dbconnection.php');
     $password = md5($_POST['password']);
         // TODO: Validate and sanitize user inputs here
 
-        $sql = "Insert Into tbldoctor(FullName,MobileNumber,Email,Specialization,Password)Values(:fname,:mobno,:email,:sid,:password)";
+        $sql = "Insert Into tbldoctor(FullName,MobileNumber,Email,Specialization,Password,Status,Approval_status)Values(:fname,:mobno,:email,:sid,:password,'Active','Pending')";
         $query = $dbh->prepare($sql);
         $query->bindParam(':fname',$fname,PDO::PARAM_STR);
         $query->bindParam(':email',$email,PDO::PARAM_STR);
         $query->bindParam(':mobno',$mobno,PDO::PARAM_INT);
-        $query->bindParam(':sid',$sid,PDO::PARAM_INT);
+        $query->bindParam(':sid',$sid,PDO::PARAM_STR);
         $query->bindParam(':password',$password,PDO::PARAM_STR);
         if ($query->execute()) {
-            echo '<script>alert("Doctor has been added successfully")</script>';
+            echo '<script>alert("Doctor has been added successfully.Pending for approval")</script>';
         } else {
             // Handle the case where the query fails
             echo '<script>alert("Error adding doctor. Please try again later.")</script>';
@@ -71,7 +71,7 @@ include('includes/dbconnection.php');
             
             <form class="form-horizontal" method="post"onsubmit="return checkAll()">
               <div class="form-group">
-                <label for="exampleTextInput1" class="col-sm-3 control-label">Doctor ID:</label>
+                <label for="exampleTextInput1" class="col-sm-3 control-label">Doctor Name:</label>
                 <div class="col-sm-9">
                   <input id="fname" type="text" class="form-control" placeholder="Full Name" name="fname" required="true" onkeyup="firstName()">
                   <div id="nameError" class="error"></div>
@@ -103,12 +103,12 @@ include('includes/dbconnection.php');
     $query1->execute();
     $results1=$query1->fetchAll(PDO::FETCH_OBJ);
     
-    $cnt=1;
+    
     if($query1->rowCount() > 0)
     {
     foreach($results1 as $row1)
     {               ?>
-                    <option value="<?php  echo htmlentities($row1->ID);?>"><?php  echo htmlentities($row1->Specialization);?></option><?php $cnt=$cnt+1;}} ?> 
+                    <option value="<?php  echo htmlentities($row1->Specialization);?>"><?php  echo htmlentities($row1->Specialization);?></option><?php }} ?> 
                 </select>
                 </div>
               </div>

@@ -1,147 +1,192 @@
 <?php
-
+session_start();
+error_reporting(0);
+include('includes/dbconnection.php');
 include('../class/Appointment.php');
 
 include('header.php');
 
+if (strlen($_SESSION['damsid'] == 0)) {
+    header('location:logout.php');
+} else {
+    if (isset($_POST['submit'])) {
+        $did = $_SESSION['damsid'];
+        $name = $_POST['fname'];
+        $mobno = $_POST['mobno'];
+        $email = $_POST['email'];
+        $sid = $_POST['specid'];
+
+        $sql = "UPDATE tbldoctor SET FullName=:name, Email=:email, MobileNumber=:mobno, Specialization=:sid WHERE ID=:did";
+        $query = $dbh->prepare($sql);
+        $query->bindParam(':did', $did, PDO::PARAM_STR);
+        $query->bindParam(':name', $name, PDO::PARAM_STR);
+        $query->bindParam(':email', $email, PDO::PARAM_STR);
+        $query->bindParam(':mobno', $mobno, PDO::PARAM_STR);
+        $query->bindParam(':sid', $sid, PDO::PARAM_STR);
+        if ($query->execute()) {
+            echo '<script>alert("Profile has been updated")</script>';
+        } else {
+            // Handle the case where the query fails
+            echo '<script>alert("Error updating profile. Please try again later.")</script>';
+        }
+    }
+}
+
+if (strlen($_SESSION['damsid'] == 0)) {
+    header('location:logout.php');
+} else {
+    $did = $_SESSION['damsid'];
+    
+    // Query to fetch the doctor's profile data
+    $sql = "SELECT * FROM tbldoctor WHERE ID = :did";
+    $query = $dbh->prepare($sql);
+    $query->bindParam(':did', $did, PDO::PARAM_STR);
+    $query->execute();
+    $row = $query->fetch(PDO::FETCH_OBJ);
+}
+
+
+?>
+<head>
+    <style>
+        .error {
+        color: red; /* Define the text color for error messages */
+        font-size: 12px; /* Define the font size for error messages */
+    }
+    </style>
+    </head>
+    
+<h1 class="h3 mb-4 text-gray-800">Profile</h1>
+
+<a href="javascript:void(0)" "form-control"><?php echo $fname; ?></a>
+<form method="post" id="profile_form" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-8">
+            <span id="message"></span>
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <div class="row">
+                        <div class="col">
+                            <h6 class="m-0 font-weight-bold text-danger">Profile</h6>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="submit" class="btn btn-success" name="submit">Update</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="fname">Doctor Name</label>
+                        <input type="text" name="fname" id="fname" class="form-control"
+                            value="<?php echo $row->FullName; ?>" required data-parsley-pattern="/^[a-zA-Z0-9 \s]+$/"
+                            data-parsley-maxlength="175" data-parsley-trigger="keyup" onkeyup="validateName()" />
+                        <div id="nameError" class="error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="text" name="email" id="email" class="form-control"
+                            value="<?php echo $row->Email; ?>" required data-parsley-type="email"
+                            data-parsley-trigger="keyup" onkeyup="validateEmail()" />
+                        <div id="emailError" class="error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="mobno">Contact No.</label>
+                        <input type="text" name="mobno" id="mobno" class="form-control"
+                            value="<?php echo $row->MobileNumber; ?>" required
+                            data-parsley-trigger="keyup" onkeyup="validateMobile()" />
+                        <div id="mobileError" class="error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="specid">Specialization</label>
+                        <select class="form-control" name="specid" id="specid" required>
+                            <?php
+                            $sql1 = "SELECT * FROM tblspecialization";
+                            $query1 = $dbh->prepare($sql1);
+                            $query1->execute();
+                            $results1 = $query1->fetchAll(PDO::FETCH_OBJ);
+
+                            foreach ($results1 as $row1) {
+                            ?>
+                            <option value="<?php echo htmlentities($row1->Specialization); ?>"><?php echo htmlentities($row1->Specialization); ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<?php
+include('footer.php');
 ?>
 
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Profile</h1>
-
-                    <!-- DataTales Example -->
-                    
-                    <form method="post" id="profile_form" enctype="multipart/form-data">
-                        <div class="row"><div class="col-md-8"><span id="message"></span><div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <div class="row">
-                                    <div class="col">
-                                        <h6 class="m-0 font-weight-bold text-danger">Profile</h6>
-                                    </div>
-                                    <div clas="col" align="right">
-                                        <input type="hidden" name="action" value="admin_profile" />
-                                        <button type="submit" name="edit_button" id="edit_button" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> Update</button>
-                                        &nbsp;&nbsp;
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <!--<div class="row">
-                                    <div class="col-md-6">!-->
-                                        <div class="form-group">
-                                            <label>Admin Name</label>
-                                            <input type="text" name="admin_name" id="admin_name" class="form-control" required data-parsley-pattern="/^[a-zA-Z0-9 \s]+$/" data-parsley-maxlength="175" data-parsley-trigger="keyup" />
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Admin Email Address</label>
-                                            <input type="text" name="admin_email_address" id="admin_email_address" class="form-control" required  data-parsley-type="email" data-parsley-trigger="keyup" />
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Password</label>
-                                            <input type="password" name="admin_password" id="admin_password" class="form-control" required data-parsley-maxlength="16" data-parsley-trigger="keyup" />
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Hospital Name</label>
-                                            <input type="text" name="hospital_name" id="hospital_name" class="form-control" required  data-parsley-trigger="keyup" />
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Hospital Address</label>
-                                            <textarea name="hospital_address" id="hospital_address" class="form-control" required ></textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Hospital Contact No.</label>
-                                            <input type="text" name="hospital_contact_no" id="hospital_contact_no" class="form-control" required  data-parsley-trigger="keyup" />
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Hospital Logo</label><br />
-                                            <input type="file" name="hospital_logo" id="hospital_logo" />
-                                            <span id="uploaded_hospital_logo"></span>
-                                        </div>
-                                    <!--</div>
-                                </div>!-->
-                            </div>
-                        </div></div></div>
-                    </form>
-                <?php
-                include('footer.php');
-                ?>
-
 <script>
-$(document).ready(function(){
+    function validateForm() {
+            const isNameValid = validateName();
+            const isEmailValid = validateEmail();
+            const isMobileValid = validateMobile();
+            const isAgeValid = validateAge();
+            const isAddressValid = validateAddress();
+            const isPasswordValid = validatePassword();
 
-    
-    $('#admin_email_address').val("<?php echo $row['admin_email_address']; ?>");
-    $('#admin_password').val("<?php echo $row['admin_password']; ?>");
-    $('#admin_name').val("<?php echo $row['admin_name']; ?>");
-    $('#hospital_name').val("<?php echo $row['hospital_name']; ?>");
-    $('#hospital_address').val("<?php echo $row['hospital_address']; ?>");
-    $('#hospital_contact_no').val("<?php echo $row['hospital_contact_no']; ?>");
-    
-    $("#uploaded_hospital_logo").html("<img src='<?php echo $row["hospital_logo"]; ?>' class='img-thumbnail' width='100' /><input type='hidden' name='hidden_hospital_logo' value='<?php echo $row['hospital_logo']; ?>' />");
+            if (isNameValid && isEmailValid && isMobileValid && isAgeValid && isAddressValid && isPasswordValid) {
+                return true;
+            } 
+            
+        }
+  function validateName() {
+            const nameInput = document.getElementById("fname");
+            const nameError = document.getElementById("nameError");
+            nameError.style.color = "red";
+            const name = nameInput.value.trim();
+            const nameRegex = /^[A-Za-z]+$/;
+            let hasConsecutiveSameChars = false;
+            for (let i = 0; i < name.length - 1; i++) {
+                if (name[i] === name[i + 1]) {
+                    hasConsecutiveSameChars = true;
+                    break;
+                }
+            }
+            if (!nameRegex.test(name)) {
+                nameError.textContent = "Name should only contain letters";
+            } else if (hasConsecutiveSameChars) {
+                nameError.textContent = "Name should not have consecutive same characters";
+            } else {
+                nameError.textContent = "";
+            }
+        }
 
-    
-    $("#uploaded_hospital_logo").html("<input type='hidden' name='hidden_hospital_logo' value='' />");
-   
+        function validateEmail() {
+            const email = document.getElementById("email").value.trim();
+            const emailError = document.getElementById("emailError");
+            const emailRegex = /^[^\s@]+@gmail\.com$/;
 
-    $('#profile_form').parsley();
+            if (!emailRegex.test(email)) {
+                emailError.textContent = "Invalid email format";
+                emailError.style.color = "red";
+                return false;
+            }
 
-	$('#profile_form').on('submit', function(event){
-		event.preventDefault();
-		if($('#profile_form').parsley().isValid())
-		{		
-			$.ajax({
-				url:"profile_action.php",
-				method:"POST",
-				data:new FormData(this),
-                dataType:'json',
-                contentType:false,
-                processData:false,
-				beforeSend:function()
-				{
-					$('#edit_button').attr('disabled', 'disabled');
-					$('#edit_button').html('wait...');
-				},
-				success:function(data)
-				{
-					$('#edit_button').attr('disabled', false);
-                    $('#edit_button').html('<i class="fas fa-edit"></i> Edit');
+            emailError.textContent = "";
+            return true;
+        }
 
-                    if(data.error != '')
-                    {
-                        $('#message').html(data.error);
-                    }
-                    else
-                    {
+        function validateMobile() {
+            const mobile = document.getElementById("mobno").value.trim();
+            const mobileError = document.getElementById("mobileError");
+            const mobileRegex = /^[789]\d{9}$/;
+            const sameDigitRegex = /^(\d)\1+$/;
 
-                        $('#admin_email_address').val(data.admin_email_address);
-                        $('#admin_password').val(data.admin_password);
-                        $('#admin_name').val(data.admin_name);
+            if (!mobileRegex.test(mobile) || sameDigitRegex.test(mobile)) {
+                mobileError.textContent = "Invalid mobile number";
+                mobileError.style.color = "red";
+                return false;
+            }
 
-                        $('#hospital_name').val(data.hospital_name);
-                        $('#hospital_address').val(data.hospital_address);
-                        $('#hospital_contact_no').val(data.hospital_contact_no);
+            mobileError.textContent = "";
+            return true;
+        }
 
-                        if(data.hospital_logo != '')
-                        {
-                            $("#uploaded_hospital_logo").html("<img src='"+data.hospital_logo+"' class='img-thumbnail' width='100' /><input type='hidden' name='hidden_hospital_logo' value='"+data.hospital_logo+"'");
-                        }
-                        else
-                        {
-                            $("#uploaded_hospital_logo").html("<input type='hidden' name='hidden_hospital_logo' value='"+data.hospital_logo+"'");
-                        }
-
-                        $('#message').html(data.success);
-
-    					setTimeout(function(){
-
-    				        $('#message').html('');
-
-    				    }, 5000);
-                    }
-				}
-			})
-		}
-	});
-
-});
-</script>
+       
+    </script>

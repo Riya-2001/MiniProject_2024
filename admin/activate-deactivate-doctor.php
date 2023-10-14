@@ -13,6 +13,7 @@ if (isset($_GET['id']) && isset($_GET['action'])) {
 
     if ($action == 'activate') {
         $sql = "UPDATE tbldoctor SET Status = 'Active' WHERE ID = :id";
+        
     } elseif ($action == 'deactivate') {
         $sql = "UPDATE tbldoctor SET Status = 'Inactive' WHERE ID = :id";
     }

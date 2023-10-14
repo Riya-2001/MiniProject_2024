@@ -66,11 +66,12 @@ $query->execute();
           <hr class="widget-separator">
           <div class="widget-body">
             
-            <form class="form-horizontal" method="post">
+            <form class="form-horizontal" method="post"onsubmit="return validateForm()">
               <div class="form-group">
-                <label for="exampleTextInput1" class="col-sm-3 control-label">Admin ID:</label>
+                <label for="exampleTextInput1" class="col-sm-3 control-label">Admin Name:</label>
                 <div class="col-sm-9">
-                  <input id="fname" type="text" class="form-control" placeholder="Full Name" name="fname" required="true" value="<?php  echo $row->FullName;?>">
+                  <input id="fname" type="text" class="form-control" placeholder="Full Name" name="fname" required="true" onkeyup="validateName()" value="<?php  echo $row->FullName;?>">
+                  <div id="nameError" class="error"></div>
                 </div>
               </div>
               
@@ -78,7 +79,8 @@ $query->execute();
               <div class="form-group">
                 <label for="email2" class="col-sm-3 control-label">Email:</label>
                 <div class="col-sm-9">
-                  <input type="email" class="form-control" id="email" name="email" value="<?php  echo $row->Email;?>" required='true'>
+                  <input type="email" class="form-control" id="email" name="email" onkeyup="validateEmail()"value="<?php  echo $row->Email;?>" required='true'>
+                  <div id="emailError" class="error"></div>
                 </div>
               </div>
              <?php $cnt=$cnt+1;}?>
@@ -101,7 +103,52 @@ $query->execute();
 </main>
 <!--========== END app main -->
 
-  
+<script>
+  function validateForm() {
+            const isNameValid = validateName();
+            const isEmailValid = validateEmail();
+            
+
+            if (isNameValid && isEmailValid) {
+                return true;
+            } 
+        }
+  function validateName() {
+    const nameInput = document.getElementById("fname");
+            const nameError = document.getElementById("nameError");
+            nameError.style.color = "red";
+            const name = nameInput.value.trim();
+            const nameRegex = /^[A-Za-z]+$/;
+            let hasConsecutiveSameChars = false;
+            for (let i = 0; i < name.length - 1; i++) {
+                if (name[i] === name[i + 1]) {
+                    hasConsecutiveSameChars = true;
+                    break;
+                }
+            }
+            if (!nameRegex.test(name)) {
+                nameError.textContent = "Name should only contain letters";
+            } else if (hasConsecutiveSameChars) {
+                nameError.textContent = "Name should not have consecutive same characters";
+            } else {
+                nameError.textContent = "";
+            }
+        }
+function validateEmail() {
+    const email = document.getElementById("email").value.trim();
+            const emailError = document.getElementById("emailError");
+            const emailRegex = /^[^\s@]+@gmail\.com$/;
+
+            if (!emailRegex.test(email)) {
+                emailError.textContent = "Invalid email format";
+                emailError.style.color = "red";
+                return false;
+            }
+
+            emailError.textContent = "";
+            return true;
+        }
+        </script>
   <!-- SIDE PANEL -->
  
 

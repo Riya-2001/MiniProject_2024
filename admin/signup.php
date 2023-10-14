@@ -66,7 +66,7 @@ $query_admin->bindParam(':password',$password,PDO::PARAM_STR);
 		</div><!-- logo -->
 		<div class="simple-page-form animated flipInY" id="login-form">
 	<h4 class="form-title m-b-xl text-center">Sign Up With Your DentCare Account</h4>
-	<form action="" method="post"onsubmit="return validateForm()">
+	<form action="" method="post" onsubmit="return validateForm()">
 		<div class="form-group">
 			<input id="fname" type="text" class="form-control" placeholder="Full Name" name="fname" required="true"onkeyup="validateName()">
 			<div id="nameError" class="error"></div>
@@ -97,16 +97,15 @@ $query_admin->bindParam(':password',$password,PDO::PARAM_STR);
 </div>
 	</div><!-- .simple-page-wrap -->
 	<script>
-	function validateForm() {
+function validateForm() {
             const isNameValid = validateName();
             const isEmailValid = validateEmail();
-            const isMobileValid = validateMobile();
             const isPasswordValid = validatePassword();
+            const isCPasswordValid = validateCPassword();
 
-            if (isNameValid && isEmailValid && isMobileValid && isPasswordValid) {
+            if (isNameValid && isEmailValid && isPasswordValid && isCPasswordValid) {
                 return true;
-            
-			}
+            } 
         }
   function validateName() {
             const nameInput = document.getElementById("fname");

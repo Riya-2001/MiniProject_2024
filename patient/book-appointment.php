@@ -1,110 +1,208 @@
-<!DOCTYPE html>
-<html>
+<?php
+session_start();
+error_reporting(0);
+include('includes/dbconnection.php');
 
+if (isset($_POST['submit'])) {
+    $appdate = $_POST['date'];
+    $apptime = $_POST['time'];
+    $specialization = $_POST['specialization'];
+    $doctorlist = $_POST['doctorlist'];
+    $message = $_POST['message'];
+    $aptnumber = mt_rand(100000000, 999999999);
+    $cdate = date('Y-m-d');
+
+    if ($appdate <= $cdate) {
+        echo '<script>alert("Appointment date must be greater than today\'s date")</script>';
+    } else {
+        $sql = "INSERT INTO tblappointment (AppointmentNumber, AppointmentDate, AppointmentTime, Specialization, Doctor, Message, Status, PatientID) VALUES (:aptnumber, :appdate, :apptime, :specialization, :doctorlist, :message, 'Booked', :patient_id)";
+        $query = $dbh->prepare($sql);
+        $query->bindParam(':aptnumber', $aptnumber, PDO::PARAM_STR);
+        $query->bindParam(':appdate', $appdate, PDO::PARAM_STR);
+        $query->bindParam(':apptime', $apptime, PDO::PARAM_STR);
+        $query->bindParam(':specialization', $specialization, PDO::PARAM_STR);
+        $query->bindParam(':doctorlist', $doctorlist, PDO::PARAM_STR);
+        $query->bindParam(':message', $message, PDO::PARAM_STR);
+        $query->bindParam(':patient_id', $_SESSION['damsid'], PDO::PARAM_INT);
+
+        if ($query->execute()) {
+            echo '<script>alert("Your Appointment Request Has Been Sent. We Will Contact You Soon.")</script>';
+            echo "<script>window.location.href ='book-appointment.php'</script>";
+        } else {
+            echo '<script>alert("Something Went Wrong. Please try again.")</script>';
+        }
+    }
+}
+?>
+
+<!doctype html>
+<html lang="en">
 <head>
-  <!-- Basic -->
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <!-- Mobile Metas -->
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <!-- Site Metas -->
-  <meta name="keywords" content="" />
-  <meta name="description" content="" />
-  <meta name="author" content="" />
+    <title>Doctor Appointment Management System || Home Page</title>
+    <!-- CSS FILES -->
+    <style>
+        /* Style for the form container */
+        .booking-form {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
 
-  <title>DentCare Dental Clinic</title>
+        /* Style for form inputs and labels */
+        .form-control {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+        }
 
+        label {
+            font-weight: bold;
+        }
 
-  <!-- bootstrap core css -->
-  <link rel="stylesheet" type="text/css" href="bootstrap.css" />
+        /* Style for the "Book Now" button */
+        #submit-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-  <!-- fonts style -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+        #submit-button:hover {
+            background-color: #0056b3;
+        }
 
-  <!--owl slider stylesheet -->
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+        /* Add more CSS rules to style your form as needed */
 
-  <!-- font awesome style -->
-  <link href="font-awesome.min.css" rel="stylesheet" />
-  <!-- nice select -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" integrity="sha256-mLBIhmBvigTFWPSCtvdu6a76T+3Xyt+K571hupeFLg4=" crossorigin="anonymous" />
-  <!-- datepicker -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css">
-  <!-- Custom styles for this template -->
-  <link href="style.css" rel="stylesheet" />
-  <!-- responsive style -->
-  <link href="responsive.css" rel="stylesheet" />
-
-</head>
-
-<body class="menubar-left menubar-unfold menubar-light theme-primary">
-<!--============= start main area -->
-
-<?php include_once('includes/header.php');?>
-
-<?php include_once('includes/sidebar.php');?>
+    </style>
     
-<section class="book_section layout_padding">
-    <div class="container">
-      <div class="row">
-        <div class="col">
-          <form>
-            <h4>
-              BOOK <span>APPOINTMENT</span>
-            </h4>
-            <div class="form-row ">
-              <div class="form-group col-lg-4">
-                <label for="inputPatientName">Patient Name </label>
-                <input type="text" class="form-control" id="inputPatientName" placeholder="">
-              </div>
-              <div class="form-group col-lg-4">
-                <label for="inputDoctorName">Doctor's Name</label>
-                <select name="" class="form-control wide" id="inputDoctorName">
-                  <option value="Normal distribution">Dr. Hennry </option>
-                  <option value="Normal distribution">Dr. Jenni </option>
-                  <option value="Normal distribution">Dr.Morco </option>
-                </select>
-              </div>
-              <div class="form-group col-lg-4">
-                <label for="inputDepartmentName">Department's Name</label>
-                <select name="" class="form-control wide" id="inputDepartmentName">
-                  <option value="Normal distribution ">Orthodontics </option>
-                  <option value="Normal distribution ">Endodontics </option>
-                  <option value="Normal distribution ">Periodontics </option>
-                </select>
-              </div>
-            </div>
-            <div class="form-row ">
-              <div class="form-group col-lg-4">
-                <label for="inputPhone">Phone Number</label>
-                <input type="number" class="form-control" id="inputPhone" placeholder="XXXXXXXXXX">
-              </div>
-              <div class="form-group col-lg-4">
-                <label for="inputSymptoms">Symptoms</label>
-                <input type="text" class="form-control" id="inputSymptoms" placeholder="">
-              </div>
-              <div class="form-group col-lg-4">
-                <label for="inputDate">Choose Date </label>
-                <div class="input-group date" id="inputDate" data-date-format="mm-dd-yyyy">
-                  <input type="text" class="form-control" readonly>
-                  <span class="input-group-addon date_icon">
-                    <i class="fa fa-calendar" aria-hidden="true"></i>
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="btn-box">
-              <button type="submit" class="btn ">Submit Now</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- end book section -->
+    <link rel="stylesheet" href="libs/bower/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="libs/bower/material-design-iconic-font/dist/css/material-design-iconic-font.css">
+    <!-- build:css assets/css/app.min.css -->
+    <link rel="stylesheet" href="libs/bower/animate.css/animate.min.css">
+    <link rel="stylesheet" href="libs/bower/fullcalendar/dist/fullcalendar.min.css">
+    <link rel="stylesheet" href="libs/bower/perfect-scrollbar/css/perfect-scrollbar.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.css">
+    <link rel="stylesheet" href="assets/css/core.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+    <!-- endbuild -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:400,500,600,700,800,900,300">
+    <script src="libs/bower/breakpoints.js/dist/breakpoints.min.js"></script>
+    <script>
+        Breakpoints();
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function getdoctors(val) {
+            $.ajax({
+                type: "POST",
+                url: "get_doctors.php",
+                data: 'sp_id=' + val,
+                success: function (data) {
+                    $("#doctorlist").html(data);
+                }
+            });
+        }
+    </script>
 </head>
-</body>
 
+<body id="top" class="menubar-left menubar-unfold menubar-light theme-primary">
+<!--============= start main area -->
+<?php include_once('includes/header.php');?>
+<?php include_once('includes/sidebar.php');?>
+<!-- APP MAIN ==========-->
+<main id="app-main" class="app-main">
+    <div class="wrap">
+        <div class="booking-form">
+            <section class="app-content">
+                <div class="row">
+                    <!-- DOM dataTable -->
+                    <div class="col-md-12">
+                        <div class="widget">
+                            <header class="widget-header">
+                            </header><!-- .widget-header -->
+                            <hr class="widget-separator">
+                            <div class="widget-body">
+                                <h2 class="text-center mb-lg-3 mb-2">Book an appointment</h2>
+                                <form role="form" method="post">
+                                    <div class="col-lg-6 col-12">
+                                        <input type="date" name="date" id="date" value="" class="form-control">
+                                    </div>
+                                    <div class="col-lg-6 col-12">
+                                        <input type="time" name="time" id="time" value="" class="form-control">
+                                    </div>
+                                    <div class="col-lg-6 col-12">
+                                        <select onChange="getdoctors(this.value);" name="specialization" id="specialization"
+                                                class="form-control" required>
+                                            <option value="">Select specialization</option>
+                                            <!--- Fetching States--->
+                                            <?php
+                                            $sql = "SELECT * FROM tblspecialization";
+                                            $stmt = $dbh->query($sql);
+                                            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+                                            while ($row = $stmt->fetch()) { ?>
+                                                <option value="<?php echo $row['Specialization']; ?>"><?php echo $row['Specialization']; ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-6 col-12">
+                                        <select name="doctorlist" id="doctorlist" class="form-control">
+                                            <option value="">Select Doctor</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <textarea class="form-control" rows="5" id="message" name="message"
+                                                  placeholder="Additional Message"></textarea>
+                                    </div>
+                                    <div class="col-lg-3 col-md-4 col-12"> <!-- Corrected class definition -->
+    <button type="submit" class="form-control" name="submit" id="submit-button">
+        Book Now
+    </button>
+</div>
+                                </form>
+                            </div><!-- .widget-body -->
+                        </div><!-- .widget -->
+                    </div><!-- END column -->
+                </div><!-- .row -->
+            </section><!-- .app-content -->
+        </div><!-- .wrap -->
+        <!-- APP FOOTER -->
+        <?php include_once('includes/footer.php');?>
+        <!-- /#app-footer -->
+    </div>
+</main>
+<!--========== END app main -->
+
+<!-- APP CUSTOMIZER -->
+<?php include_once('includes/customizer.php');?>
+
+<!-- JAVASCRIPT FILES -->
+<script src="libs/bower/jquery/dist/jquery.js"></script>
+<script src="libs/bower/jquery-ui/jquery-ui.min.js"></script>
+<script src="libs/bower/jQuery-Storage-API/jquery.storageapi.min.js"></script>
+<script src="libs/bower/bootstrap-sass/assets/javascripts/bootstrap.js"></script>
+<script src="libs/bower/jquery-slimscroll/jquery.slimscroll.js"></script>
+<script src="libs/bower/perfect-scrollbar/js/perfect-scrollbar.jquery.js"></script>
+<script src="libs/bower/PACE/pace.min.js"></script>
+<!-- endbuild -->
+
+<!-- build:js assets/js/app.min.js -->
+<script src="assets/js/library.js"></script>
+<script src="assets/js/plugins.js"></script>
+<script src="assets/js/app.js"></script>
+<!-- endbuild -->
+<script src="libs/bower/moment/moment.js"></script>
+<script src="libs/bower/fullcalendar/dist/fullcalendar.min.js"></script>
+<script src="assets/js/fullcalendar.js"></script>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/owl.carousel.min.js"></script>
+<script src="js/scrollspy.min.js"></script>
+<script src="js/custom.js"></script>
+</body>
 </html>
