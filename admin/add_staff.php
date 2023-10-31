@@ -3,30 +3,42 @@ session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
 
-    if (isset($_POST['submit'])) {
-      $fname=$_POST['fname'];
-      $email=$_POST['email'];
-    $mobile=$_POST['mobile'];
-    $address=$_POST['address'];
+if (isset($_POST['submit'])) {
+    $fname = $_POST['fname'];
+    $email = $_POST['email'];
+    $mobile = $_POST['mobile'];
+    $address = $_POST['address'];
     $password = md5($_POST['password']);
-    
-        // TODO: Validate and sanitize user inputs here
 
-        $sql = "Insert Into tblstaff(FullName,Email,MobileNo,Address,Password,,Status,Approval_status)Values(:fname,:email,:mobile,:address,:password,'Active','Pending')";
-        $query = $dbh->prepare($sql);
-        $query->bindParam(':fname',$fname,PDO::PARAM_STR);
-        $query->bindParam(':email',$email,PDO::PARAM_STR);
-        $query->bindParam(':mobile',$mobile,PDO::PARAM_STR);
-        $query->bindParam(':address',$address,PDO::PARAM_STR);
-        $query->bindParam(':password',$password,PDO::PARAM_STR);
-        if ($query->execute()) {
-            echo '<script>alert("Staff has been added successfully.Pending for approval.")</script>';
+    // Insert into tblstaff
+    $sql = "INSERT INTO tblstaff (FullName, Email, MobileNo, Address, Password, Status, Approval_status) VALUES (:fname, :email, :mobile, :address, :password, 'Active', 'Approved')";
+    $query = $dbh->prepare($sql_staff);
+    $query->bindParam(':fname', $fname, PDO::PARAM_STR);
+    $query->bindParam(':email', $email, PDO::PARAM_STR);
+    $query->bindParam(':mobile', $mobile, PDO::PARAM_STR);
+    $query->bindParam(':address', $address, PDO::PARAM_STR);
+    $query->bindParam(':password', $password, PDO::PARAM_STR);
+
+    if ($queryf->execute()) {
+        // Insert into tblrole
+        $sql_role = "INSERT INTO tblrole (Email, Password, Role, Status) VALUES (:email, :password, 2, 1)";
+        $query_role = $dbh->prepare($sql_role);
+        $query_role->bindParam(':email', $email, PDO::PARAM_STR);
+        $query_role->bindParam(':password', $password, PDO::PARAM_STR);
+
+        if ($query_role->execute()) {
+            echo '<script>alert("Doctor has been added successfully.")</script>';
         } else {
             // Handle the case where the query fails
-            echo '<script>alert("Error adding staff. Please try again later.")</script>';
+            echo '<script>alert("Error adding doctor. Please try again later.")</script>';
         }
+    } else {
+        // Handle the case where the query for tblstaff fails
+        echo '<script>alert("Error adding staff. Please try again later.")</script>';
     }
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,7 +119,7 @@ include('includes/dbconnection.php');
               </div> 
               <div class="row">
                 <div class="col-sm-9 col-sm-offset-3">
-                  <button type="submit" class="btn btn-success" name="submit"onkeyup="checkAll()">Update</button>
+                  <button type="submit" class="btn btn-success" name="submit"onkeyup="validateForm()">Update</button>
                 </div>
               </div>
             </form>
@@ -128,17 +140,14 @@ include('includes/dbconnection.php');
   <!-- SIDE PANEL -->
   <script>
 	function validateForm() {
-            const isNameValid = validateName();
-            const isEmailValid = validateEmail();
-            const isMobileValid = validateMobile();
-          const isAddressValid = validateAddress();
-          
-
-            if (isNameValid && isEmailValid && isMobileValid && isAddressValid) {
-                return true;
-            
-			}
-        }
+          if(validateName() && validateEmail() && validateMobile() && validateAddress()){
+     return true;
+   }
+   else
+   {
+    return false;
+   }
+  }
   function validateName() {
             const nameInput = document.getElementById("fname");
             const nameError = document.getElementById("nameError");
@@ -154,10 +163,13 @@ include('includes/dbconnection.php');
             }
             if (!nameRegex.test(name)) {
                 nameError.textContent = "Name should only contain letters";
+                return false;
             } else if (hasConsecutiveSameChars) {
                 nameError.textContent = "Name should not have consecutive same characters";
+                return false;
             } else {
                 nameError.textContent = "";
+                return true;
             }
         }
 
@@ -179,7 +191,7 @@ include('includes/dbconnection.php');
         function validateMobile() {
             const mobile = document.getElementById("mobile").value.trim();
             const mobileError = document.getElementById("mobileError");
-            const mobileRegex = /^[789]\d{9}$/;
+            const mobileRegex = /^[6789]\d{9}$/;
             const sameDigitRegex = /^(\d)\1+$/;
 
             if (!mobileRegex.test(mobile) || sameDigitRegex.test(mobile)) {

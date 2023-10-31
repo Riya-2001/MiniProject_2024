@@ -11,7 +11,7 @@ include('includes/dbconnection.php');
     $password = md5($_POST['password']);
         // TODO: Validate and sanitize user inputs here
 
-        $sql = "Insert Into tbldoctor(FullName,MobileNumber,Email,Specialization,Password,Status,Approval_status)Values(:fname,:mobno,:email,:sid,:password,'Active','Pending')";
+        $sql = "Insert Into tbldoctor(FullName,MobileNumber,Email,Specialization,Password,Status,Approval_status)Values(:fname,:mobno,:email,:sid,:password,'Active','Approved')";
         $query = $dbh->prepare($sql);
         $query->bindParam(':fname',$fname,PDO::PARAM_STR);
         $query->bindParam(':email',$email,PDO::PARAM_STR);
@@ -19,11 +19,18 @@ include('includes/dbconnection.php');
         $query->bindParam(':sid',$sid,PDO::PARAM_STR);
         $query->bindParam(':password',$password,PDO::PARAM_STR);
         if ($query->execute()) {
-            echo '<script>alert("Doctor has been added successfully.Pending for approval")</script>';
+          $sql_role = "INSERT INTO tblrole(Email, Password, Role, Status) VALUES(:email, :password, 2, 1)";
+          $query_role = $dbh->prepare($sql_role);
+          $query_role->bindParam(':email', $email, PDO::PARAM_STR);
+          $query_role->bindParam(':password', $password, PDO::PARAM_STR);
+
+          if ($query_role->execute()) {
+            echo '<script>alert("Doctor has been added successfully.")</script>';
         } else {
             // Handle the case where the query fails
             echo '<script>alert("Error adding doctor. Please try again later.")</script>';
         }
+      }
     }
 ?>
 <!DOCTYPE html>
@@ -142,6 +149,16 @@ include('includes/dbconnection.php');
   
   <!-- SIDE PANEL -->
   <script>
+    function checkAll() {
+if(firstName() && specId() && emailUser() && phoneUser())
+{
+return true;
+}
+else
+   {
+    return false;
+   }
+}
   function firstName() {
     const nameInput = document.getElementById("fname");
             const nameError = document.getElementById("nameError");
@@ -157,10 +174,13 @@ include('includes/dbconnection.php');
             }
             if (!nameRegex.test(name)) {
                 nameError.textContent = "Name should only contain letters";
+                return false;
             } else if (hasConsecutiveSameChars) {
                 nameError.textContent = "Name should not have consecutive same characters";
+                return false;
             } else {
                 nameError.textContent = "";
+                return true;
             }
         }
 function emailUser() {
@@ -206,13 +226,6 @@ function phoneUser() {
             mobileError.textContent = "";
             return true;
         }
-
-function checkAll() {
-if(firstName()&&specId()&&emailUser()&&phoneUser())
-{
-return true;
-}
-}
 </script>
 
   <!-- build:js assets/js/core.min.js -->

@@ -23,7 +23,6 @@ if (isset($_POST['submit'])) {
             $query_patient->bindParam(':age', $age, PDO::PARAM_INT);
             $query_patient->bindParam(':address', $address, PDO::PARAM_STR);
             $query_patient->bindParam(':password', $password, PDO::PARAM_STR);
-        
         if ($query_patient->execute()) {
         $sql_role="INSERT INTO tblrole(Email,Password,Role,Status) VALUES(:email, :password, 1, 1)";
         $query_role = $dbh->prepare($sql_role);

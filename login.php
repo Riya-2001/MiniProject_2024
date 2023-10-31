@@ -73,7 +73,7 @@ if (isset($_POST['login'])) {
             } else {
                 // Handle other roles if needed.
             }
-        } else if ($userStatus == 2) {
+        } else if ($userStatus == 'Inactive') {
             echo "<SCRIPT type='text/javascript'>alert('Permission Denied.....!!');
             window.location.replace(\"index.html\");
             </SCRIPT>";

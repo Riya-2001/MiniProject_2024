@@ -9,7 +9,7 @@ $ptid = $_SESSION['damsid'];
 $ap_date = $_POST['ap_date'];
 $did = $_POST['did'];
 $tsslot = $_POST['tsslot'];
-$status = 0;
+$status = 2;
 
 // Check if the selected time slot is available (not booked by 3 people)
 $sql_check_slot = "SELECT COUNT(*) as booked_count FROM tblbooking WHERE did = :did AND bkdate = :ap_date AND bktimeslot = :tsslot";

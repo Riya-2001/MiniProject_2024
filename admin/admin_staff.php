@@ -137,7 +137,7 @@ include('includes/dbconnection.php');
             </div>
         </div>
 
-        <div class="col-md-4 col-xl-3">
+        <!--<div class="col-md-4 col-xl-3">
             <div class="card bg-c-yellow order-card">
                 <div class="card-block">
                     <a href="approve_reject_staff.php"> 
@@ -147,7 +147,7 @@ include('includes/dbconnection.php');
                     <h2 class="text-right"><i class="fas fa-check-circle f-left"></i></h2>
                 </div>
             </div>
-        </div>
+        </div>-->
 
 <br><br><br><br><br><br><br>
       
