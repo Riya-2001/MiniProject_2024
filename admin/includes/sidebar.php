@@ -9,7 +9,8 @@
       <div class="media-body">
         <div class="foldable">
           <?php
-          
+         session_start();
+         include('includes/dbconnection.php'); 
 $eid=$_SESSION['damsid'];
 $sql="SELECT FullName,Email from  tbladmin where ID=:eid";
 $query = $dbh -> prepare($sql);
@@ -34,6 +35,12 @@ $fname=$row->FullName;
       <ul class="app-menu">
 
       <li class="has-submenu">
+          <a href="home.php">
+            <i class="menu-icon zmdi zmdi-view-dashboard zmdi-hc-lg"></i>
+            <span class="menu-text">Homepage</span>
+          </a>
+        </li>
+        <li class="has-submenu">
           <a href="admin_doctor.php">
             <i class="menu-icon zmdi zmdi-view-dashboard zmdi-hc-lg"></i>
             <span class="menu-text">Doctor</span>
@@ -59,8 +66,27 @@ $fname=$row->FullName;
             <i class="menu-icon zmdi zmdi-view-dashboard zmdi-hc-lg"></i>
             <span class="menu-text">Change Password</span>
           </a>
-        </li>
+        </li> 
         
+        <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilitiess"
+                    aria-expanded="true" aria-controls="collapseUtilities">
+                    <i class="menu-icon zmdi zmdi-view-dashboard zmdi-hc-lg"></i>
+                    <span>Reports</span>
+                </a>
+                <div id="collapseUtilitiess" class="collapse" aria-labelledby="headingUtilities"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                       
+                        
+                        <a class="collapse-item" href="pdf/doctor-pdf.php" target="_blank">Doctor Details</a>
+                        <a class="collapse-item" href="pdf/staff-pdf.php" target="_blank">Staff Details</a>
+                        <!-- <a class="collapse-item" href="viewlogs.php">Login Logs</a> -->
+                        
+                    </div>
+                </div>
+            </li>
+
         <li class="has-submenu">
           <a href="logout.php">
             <i class="menu-icon zmdi zmdi-view-dashboard zmdi-hc-lg"></i>
