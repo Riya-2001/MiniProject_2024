@@ -1,7 +1,5 @@
 <?php
-session_start();
-session_unset();
-session_destroy();
-header('location:../index.html');
-
+	session_start();
+	unset($_SESSION["logined"]);
+	header("Location: ../index.php");
 ?>
